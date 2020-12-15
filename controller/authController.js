@@ -1,0 +1,49 @@
+import bcrypt from 'bcryptjs';
+import Auth from '../model/authModel.js';
+import { registerValidation, loginValidation } from './validationController.js';
+
+export const register = async (req, res) => {
+  //Validate
+  const { error } = registerValidation(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  //Check email
+  const emailExist = await Auth.findOne({ email: req.body.email });
+  if (emailExist) return res.status(400).send('Email already exist.');
+
+  //Hash the password
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+  //Register user
+  const user = new Auth({
+    name: req.body.name,
+    email: req.body.email,
+    password: hashedPassword,
+  });
+
+  try {
+    const data = await user.save();
+    res.send(`${data.name} registered`);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+};
+
+export const login = async (req, res) => {
+  //Validate
+  const { error } = loginValidation(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  //Check if email and password is correct
+  const user = await Auth.findOne({ email: req.body.email });
+  if (!user) return res.status(400).send('Email does not exist.');
+  const checkPassword = await bcrypt.compare(req.body.password, user.password);
+  if (!checkPassword) return res.status(400).send('Incorrect password.');
+
+  res.send('Logged in!');
+};
+
+export const logout = (req, res) => {};
+
+export const unRegister = (req, res) => {};
