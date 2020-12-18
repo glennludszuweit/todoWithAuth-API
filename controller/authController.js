@@ -1,6 +1,10 @@
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import Auth from '../model/authModel.js';
-import { registerValidation, loginValidation } from './validationController.js';
+import {
+  registerValidation,
+  loginValidation,
+} from '../middleware/validation.js';
 
 export const register = async (req, res) => {
   //Validate
@@ -25,6 +29,9 @@ export const register = async (req, res) => {
   try {
     const data = await user.save();
     res.send(`${data.name} registered`);
+    //Token
+    const token = jwt.sign({ _id: user._id }, process.env.SECRET_TOKEN);
+    res.header('token', token).send(token);
   } catch (error) {
     res.status(error.status).send(error);
   }
@@ -41,7 +48,9 @@ export const login = async (req, res) => {
   const checkPassword = await bcrypt.compare(req.body.password, user.password);
   if (!checkPassword) return res.status(400).send('Incorrect password.');
 
-  res.send('Logged in!');
+  //Token
+  const token = jwt.sign({ _id: user._id }, process.env.SECRET_TOKEN);
+  res.header('token', token).send(token);
 };
 
 export const logout = (req, res) => {};

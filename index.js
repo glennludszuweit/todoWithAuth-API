@@ -1,16 +1,18 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 import authRoutes from './route/authRoutes.js';
+import todoRoutes from './route/todoRoutes.js';
 
 const app = express();
-const uri = 'mongodb://localhost:27017/todos';
-const port = 9000;
+dotenv.config();
 
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
+app.use('/api/todo', todoRoutes);
 
-mongoose.connect(uri, {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useUnifiedTopology: true,
@@ -18,6 +20,6 @@ mongoose.connect(uri, {
 });
 mongoose.connection.on('open', () => console.log('Database connected.'));
 
-app.listen(port, () =>
-  console.log(`Server running on http://localhost:${port}`)
+app.listen(process.env.PORT, () =>
+  console.log(`Server running on http://localhost:${process.env.PORT}`)
 );
