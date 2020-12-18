@@ -53,6 +53,20 @@ export const login = async (req, res) => {
   res.header('token', token).send(token);
 };
 
-export const logout = (req, res) => {};
+export const logout = (req, res) => {
+  const token = jwt.sign({ data: '12345' }, 'logout', { expiresIn: 1 });
+  res.send(token);
+};
 
-export const unRegister = (req, res) => {};
+export const unRegister = async (req, res) => {
+  const decoded = jwt.verify(req.headers.token, process.env.SECRET_TOKEN);
+  const userId = decoded._id;
+  try {
+    await Auth.findByIdAndDelete(userId, (error, result) => {
+      error ? console.log(error) : result;
+    });
+    res.send('user deleted.');
+  } catch (error) {
+    res.send(error.message);
+  }
+};

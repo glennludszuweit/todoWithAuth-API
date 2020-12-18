@@ -9,8 +9,8 @@ import {
 const router = express.Router();
 
 router.post('/register', register);
-router.post('/unregister', unRegister);
 router.post('/login', login);
 router.post('/logout', logout);
+router.delete('/unregister', unRegister);
 
 export default router;
