@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-export const auth = (req, res, next) => {
+export const authenticate = (req, res, next) => {
   const token = req.header('token');
   if (!token) return res.status(401).send('Access Deneid');
   try {

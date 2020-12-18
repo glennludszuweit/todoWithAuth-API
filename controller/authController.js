@@ -28,7 +28,7 @@ export const register = async (req, res) => {
 
   try {
     const data = await user.save();
-    res.send(`${data.name} registered`);
+    res.send(data);
     //Token
     const token = jwt.sign({ _id: user._id }, process.env.SECRET_TOKEN);
     res.header('token', token).send(token);

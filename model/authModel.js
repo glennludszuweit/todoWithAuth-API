@@ -20,7 +20,6 @@ const userSchema = mongoose.Schema({
     default: Date.now(),
     required: true,
   },
-  todos: [],
 });
 
 export default mongoose.model('Auth', userSchema);

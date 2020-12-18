@@ -10,6 +10,16 @@ const todosSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+    required: true,
+  },
+  user: {
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Auth',
+  },
 });
 
 export default mongoose.model('Todos', todosSchema);
